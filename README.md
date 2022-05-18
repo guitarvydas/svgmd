@@ -116,3 +116,50 @@
 
 > sooo, this becomes a spec for hierarchical layout of anything, with references "down" into children from immediately-enclosing wrapper?
 
+> sooo, maybe an hlev (hierarchical level) can contain anything - text, drawing, code
+> { $1 ()
+>   { #kind JavaScript
+>     function hello () {
+>         console.log ('hello');
+>     }
+>   }
+> }
+> 
+> $1 transpiles to "hello", so the first line becomes "{ hello (); ... }"
+> maybe the syntax for "call" is "@":
+> 
+> { @$1
+>   { ~kind JavaScript
+>     function hello () {
+>         console.log ('hello');
+>     }
+>   }
+> }
+> 
+> @   means "invoke"
+> --> means "join"
+> ~   means "header"
+>
+> { $1 $2
+>   { ~g
+>     [box1]
+>     [box2]
+>   }
+> }
+>
+> means "place box2 after box1 on page"
+> 
+> whereas
+> { $1 --> $2
+>   { ~g
+>     [box1]
+>     [box2]
+>   }
+> }
+>
+> means "connect box1 output to box2 input"
+> and is rendered as:
+> "place box2 after box1 on page and draw an arrow from rear of box1 to front of box2"
+
+> TBD:
+> how to specify specific ports, e.g. box1.xyz --> box2.abc
