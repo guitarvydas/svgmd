@@ -1,9 +1,11 @@
 svgmd {
 
-Drawing (Drawing) = Element (arrow Element)*
+Drawing = Sequence
+
+Sequence (Sequence) = Element (arrow Element)*
 Element (Element) = Circle | Box | words
-Box (Box) = "[" Drawing* "]"
-Circle (Circle) = "(" Drawing* ")"
+Box (Box) = "[" Sequence* "]"
+Circle (Circle) = "(" Sequence* ")"
 arrow (arrow) = "->"
 
 words = word+

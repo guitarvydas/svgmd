@@ -1,0 +1,7 @@
+<html>
+<body>
+<svg>
+    <ellipse cx="60" cy="40" rx="60" ry="40" fill="#ffffff" stroke="#000000" pointer-events="all"/>
+</svg>
+</body>
+</html>
