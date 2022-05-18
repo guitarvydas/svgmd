@@ -28,45 +28,26 @@ function patternMatch (phrase) {
     }
 }
 
-function accumulate (arr) {
-    var result = {text: '', width: 0, height: 0 };
-    arr.forEach (item => {
-	result.text += item.text + ' ';
-	result.height = Math.max (item.height, result.height);
-    });
-    result.width = result.text.width;
-    return result;
-}
-
 const rewriteRules = {
     Drawing : function (_e, _as, _es) {
 	var e = _e.rewrite ();
 	var as = _as.rewrite ().join ('');
 	var es = _es.rewrite ().join ('');
-	var eAndEs = accumulate ([e, es]);
-	return eAndEs;
+	return `${e}${as}${es}`;
     },
     Element : function (e) { return e.rewrite (); },
-    Box : function (lb, d, rb) { 
-	var accumulated = accumulate (d.rewrite ());
-	var result = { shape: "rect", text: accumulated.text, width: accumulated.width, height: accumulated.height };
-	return result;
-    },
-    Circle : function (lb, d, rb) {
-	var accumulated = accumulate (d.rewrite ());
-	var result = { shape: "rect", text: accumulated.text, width: accumulated.width, height: accumulated.height };
-	return result
-    },
-    arrow : function (k) { return {}; },
+    Box : function (lb, d, rb) { return `${lb.rewrite ()}${d.rewrite ()}${rb.rewrite ()}`; },
+    Circle : function (lb, d, rb) { return `${lb.rewrite ()}${d.rewrite ()}${rb.rewrite ()}`; },
+    arrow : function (k) { return k.rewrite (); },
 
-    words : function (_words) {
-	var words = accumulate (_words.rewrite ());
-	return words; 
+    words : function (ws) { return ws.rewrite ().join (''); },
+    word  : function (_letter, _alnums)  {
+	var letter = _letter.rewrite ();
+	var alnums = _alnums.rewrite ().join ('');
+	return `${letter}${alnums}`;
     },
-    word  : function (_letter, _alnums)  { 
-	return {text: this.sourceString, width: this.sourceString.length, height: 12}; },
-    separator : function (k) { return {text: this.sourceString, width: 1, height: 12}; },
-    _terminal: function () { return {text: this.sourceString, width: this.sourceString.length, height: 12}; },
+    separator : function (k) { return k.rewrite (); },
+    _terminal: function () { return this.sourceString; },
     _iter: function (...children) { return children.map(c => c.rewrite ()); }
 };
     
