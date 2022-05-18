@@ -77,3 +77,24 @@
 > 
 
 > (()) is smaller than (), ((())) is smaller than (()), etc.
+
+>
+> hierarchical levels? 
+> { compose-using-elements-from-next-level-down { ... } }
+> {
+>   $1 --> $2
+>   {
+>     ...
+>   }
+> }
+> 
+
+> named level? so that levels can be placed anywhere in the file and don't need to be smooshed together, maybe #level-name
+
+> { $1 --> $2 { #myname } }
+>
+> {id:myname { ... } }
+
+
+> hmm, this is beginning to sound more general than just-graphics...
+
