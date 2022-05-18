@@ -98,3 +98,21 @@
 
 > hmm, this is beginning to sound more general than just-graphics...
 
+> maybe we allow raw .md in a level?
+> { $1 --> $2 { #mynamedmd } }
+>
+> {id:mynamedmd { # Introduction ## sub-heading ... } }
+
+
+>
+> how to tell .md content from .sgv content?
+> allow raw .html content?
+> allow raw .css content?
+> allow raw .txt content?
+> allow raw .csv content?
+> allow ... ?
+
+> maybe a content level has a header that declares what kind of content follows?
+
+> sooo, this becomes a spec for hierarchical layout of anything, with references "down" into children from immediately-enclosing wrapper?
+
