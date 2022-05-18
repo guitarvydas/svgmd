@@ -1,14 +1,12 @@
 svgmd {
-pipeline = phrase (arrow phrase)*
-nestedphrase =
-  | "[" phrase "]" -- bracketed
-  | "(" phrase ")" -- parenthesized
-  | phrase         -- bare
-phrase =
-  | ~separator word ws+ phrase -- recursive
-  | ~separator word            -- bottom
-word = letter alnum*
-separator = "[" | "]" | "(" | ")"
-arrow = ws* "->" ws*
-ws = " " | "\n"
+
+Drawing (Drawing) = Element (arrow Element)*
+Element (Element) = Circle | Box | words
+Box (Box) = "[" Drawing* "]"
+Circle (Circle) = "(" Drawing* ")"
+arrow (arrow) = "->"
+
+words = word+
+word (word) = ~separator letter alnum*
+separator (separator) = "[" | "]" | "(" | ")" | arrow
 }

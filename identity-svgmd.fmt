@@ -1,0 +1,8 @@
+Drawing [e1 @arrows @es] = [[${e1}${arrows}${es}]]
+Element [e] = [[${e}]]
+Box [lb @d rb] = [[${lb}${d}${rb}]]
+Circle [lb @d rb] = [[${lb}${d}${rb}]]
+arrow [k] = [[${k}]]
+words [@word] = [[${word}]]
+word [letter @alnum] = [[${letter}${alnum}]]
+separator [k] = [[${k}]]
