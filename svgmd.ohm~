@@ -1,0 +1,6 @@
+svgmd {
+word = letter alnum*
+phrase =
+  | ~separator word ws+ phrase -- recursive
+  | ~separator word            -- bottom
+}

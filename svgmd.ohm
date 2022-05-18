@@ -1,0 +1,14 @@
+svgmd {
+pipeline = phrase (arrow phrase)*
+nestedphrase =
+  | "[" phrase "]" -- bracketed
+  | "(" phrase ")" -- parenthesized
+  | phrase         -- bare
+phrase =
+  | ~separator word ws+ phrase -- recursive
+  | ~separator word            -- bottom
+word = letter alnum*
+separator = "[" | "]" | "(" | ")"
+arrow = ws* "->" ws*
+ws = " " | "\n"
+}
