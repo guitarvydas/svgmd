@@ -2,21 +2,27 @@ const Ohm = require ('ohm-js');
 
 const grammar = Ohm.grammar (String.raw`
 svgmd {
+Drawing (Drawing) = Network
 
-Drawing (Drawing) = Element (arrow Element)*
-Element (Element) = Circle | Box | words
-Box (Box) = "[" Drawing* "]"
-Circle (Circle) = "(" Drawing* ")"
-arrow (arrow) = "->"
+Network (Network) = Shape (arrow Shape)*
 
-words = word+
-word (word) = ~separator letter alnum*
-separator (separator) = "[" | "]" | "(" | ")" | arrow
+Shape (Shape) = Circle | Box
+Box (Box) = "❲" WordsOrNetwork "❳"
+Circle (Circle) = "❨" WordsOrNetwork "❩"
+
+arrow (arrow) = "⟾"
+WordsOrNetwork = 
+  | Network
+  | phrase
+
+phrase = char+
+separator (separator) = "❲" | "❳" | "❨" | "❩" | arrow
+char = ~separator any
 }
 `);
 
 
-function patternMatch (phrase) {
+Function patternMatch (phrase) {
     let matchResult = grammar.match (phrase);
     if (matchResult.succeeded ()) {
         let s = grammar.createSemantics ();
@@ -29,7 +35,10 @@ function patternMatch (phrase) {
 }
 
 const rewriteRules = {
-    Drawing : function (_e, _as, _es) {
+    Drawing : function (_d) {
+	return _d;
+    },
+    Seq: function (_e, _as, _es) {
 	var e = _e.rewrite ();
 	var as = _as.rewrite ().join ('');
 	var es = _es.rewrite ().join ('');
@@ -63,8 +72,11 @@ function rewrite (cst, hooks) {
 }
 
 
+// const inphrase = String.raw`
+// ❲Shield ❲Core❳ -> ❨Fishstick❩❳ -> ❨Warp Drive❩
+// `;
 const inphrase = String.raw`
-[Shield [Core] -> (Fishstick)] -> (Warp Drive)
+❲Shield❳
 `;
 
 var [result, rewriteHooks] = patternMatch (inphrase);
