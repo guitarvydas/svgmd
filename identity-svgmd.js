@@ -4,19 +4,15 @@ const grammar = Ohm.grammar (String.raw`
 svgmd {
 Drawing (Drawing) = Network
 
-Network (Network) = Shape ArrowShape*
-ArrowShape = arrow Shape
+Network (Network) = Shape ArrowAndShape*
+ArrowAndShape = arrow Shape
 
 Shape (Shape) = Circle | Box
-Box (Box) = "❲" WordsOrNetwork "❳"
-Circle (Circle) = "❨" WordsOrNetwork "❩"
+Box (Box) = "❲" Phrase "❳"
+Circle (Circle) = "❨" Phrase "❩"
 
 arrow (arrow) = "⟾"
-WordsOrNetwork = 
-  | Network
-  | phrase
-
-phrase = char+
+Phrase = char+
 separator (separator) = "❲" | "❳" | "❨" | "❩" | arrow
 char = ~separator any
 }
@@ -47,13 +43,10 @@ const rewriteRules = {
     Shape : function (_Shape) { return _Shape.rewrite (); },
     Box : function (_lb, _wn, _rb) { return `${_lb.rewrite ()}${_wn.rewrite ()}${_rb.rewrite ()}`; },
     Circle : function (_lb, _wn, _rb) { return `${_lb.rewrite ()}${_wn.rewrite ()}${_rb.rewrite ()}`; },
-    ArrowShape : function (_firstShape,_rest) { return `${_firstShape.rewrite ()}${_rest.rewrite ()}`; },
+    ArrowAndShape : function (_firstShape,_rest) { return `${_firstShape.rewrite ()}${_rest.rewrite ()}`; },
     arrow : function (_k) { return _k.rewrite (); },
 
-    WordsOrNetwork : function (_wn) { return _wn.rewrite (); },
-
-
-    phrase: function (_cPlus) { return _cPlus.rewrite ().join (''); },
+    Phrase: function (_cPlus) { return _cPlus.rewrite ().join (''); },
     separator : function (_k) { return _k.rewrite (); },
     char : function (_k) { return _k.rewrite (); },
     _terminal: function () { return this.sourceString; },

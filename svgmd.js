@@ -2,16 +2,23 @@ const Ohm = require ('ohm-js');
 
 const grammar = Ohm.grammar (String.raw`
 svgmd {
-Drawing = Seq
-Seq (Seq) = Element (arrow Element)*
-Element (Element) = Circle | Box | words
-Box (Box) = "❲" Seq* "❳"
-Circle (Circle) = "❨" Seq* "❩"
-arrow (arrow) = "⟾"
+Drawing (Drawing) = Network
 
-words = word+
-word (word) = ~separator letter alnum*
+Network (Network) = Shape ArrowShape*
+ArrowShape = arrow Shape
+
+Shape (Shape) = Circle | Box
+Box (Box) = "❲" WordsOrNetwork "❳"
+Circle (Circle) = "❨" WordsOrNetwork "❩"
+
+arrow (arrow) = "⟾"
+WordsOrNetwork = 
+  | Network
+  | phrase
+
+phrase = char+
 separator (separator) = "❲" | "❳" | "❨" | "❩" | arrow
+char = ~separator any
 }
 `);
 
@@ -22,31 +29,37 @@ function patternMatch (phrase) {
         let s = grammar.createSemantics ();
         return [matchResult, s];
     } else {
-        this.send ("parse error", true);
         let dontcare = null;
         return [ matchResult, dontcare ];
     }
 }
 
 const rewriteRules = {
-    Drawing : function (_e, _as, _es) {
-	var e = _e.rewrite ();
-	var as = _as.rewrite ().join ('');
-	var es = _es.rewrite ().join ('');
-	return `${e}${as}${es}`;
+    Drawing : function (_network) {
+	var network = _network.rewrite ();
+	return network;
     },
-    Element : function (e) { return e.rewrite (); },
-    Box : function (lb, d, rb) { return `${lb.rewrite ()}${d.rewrite ()}${rb.rewrite ()}`; },
-    Circle : function (lb, d, rb) { return `${lb.rewrite ()}${d.rewrite ()}${rb.rewrite ()}`; },
-    arrow : function (k) { return k.rewrite (); },
+    Network: function (_firstShape, _arrowShapeStar) {
+	var s1 = _firstShape.rewrite ();
+	var srest = _arrowShapeStar.rewrite ().join ('');
+	return `${s1}${srest}`;
+    },
+    Shape : function (_Shape) { return _Shape.rewrite (); },
+    Box : function (_lb, _wn, _rb) { 
+	var 
+	var slen = 
+	return `${_lb.rewrite ()}${_wn.rewrite ()}${_rb.rewrite ()}`; 
+    },
+    Circle : function (_lb, _wn, _rb) { return `${_lb.rewrite ()}${_wn.rewrite ()}${_rb.rewrite ()}`; },
+    ArrowShape : function (_firstShape,_rest) { return `${_firstShape.rewrite ()}${_rest.rewrite ()}`; },
+    arrow : function (_k) { return _k.rewrite (); },
 
-    words : function (ws) { return ws.rewrite ().join (''); },
-    word  : function (_letter, _alnums)  {
-	var letter = _letter.rewrite ();
-	var alnums = _alnums.rewrite ().join ('');
-	return `${letter}${alnums}`;
-    },
-    separator : function (k) { return k.rewrite (); },
+    WordsOrNetwork : function (_wn) { return _wn.rewrite (); },
+
+
+    phrase: function (_cPlus) { return _cPlus.rewrite ().join (''); },
+    separator : function (_k) { return _k.rewrite (); },
+    char : function (_k) { return _k.rewrite (); },
     _terminal: function () { return this.sourceString; },
     _iter: function (...children) { return children.map(c => c.rewrite ()); }
 };
@@ -64,18 +77,17 @@ function rewrite (cst, hooks) {
 
 
 // const inphrase = String.raw`
-// ❲Shield ❲Core❳ -> ❨Fishstick❩❳ -> ❨Warp Drive❩
+// ❲Shield ❲Core❳ -> ❨Fishstick❩❳ -> ❨Warp Drive❩ // not handled
 // `;
+const inphrase = String.raw`
+❲Shield❳ ⟾ ❲Core❳ ⟾ ❨Fishstick❩ ⟾ ❨Warp Drive❩
+`;
 // const inphrase = String.raw`
 // ❲Shield❳
 // `;
 
-const inphrase = String.raw`
-Shield
-`;
-
 var [result, rewriteHooks] = patternMatch (inphrase);
-console.log (result.succeeded ());
+//console.log (result.succeeded ());
 
 // console.log (rewriteHooks);
 
