@@ -47,7 +47,7 @@ const rewriteRules = {
     Shape : function (_Shape) { return _Shape.rewrite (); },
     Box : function (_lb, _wn, _rb) { return `${_lb.rewrite ()}${_wn.rewrite ()}${_rb.rewrite ()}`; },
     Circle : function (_lb, _wn, _rb) { return `${_lb.rewrite ()}${_wn.rewrite ()}${_rb.rewrite ()}`; },
-    ArrowShape : function (_arrow,_shape) { return `${_arrow.rewrite ()}${_shape.rewrite ()}`; },
+    ArrowShape : function (_firstShape,_rest) { return `${_firstShape.rewrite ()}${_rest.rewrite ()}`; },
     arrow : function (_k) { return _k.rewrite (); },
 
     WordsOrNetwork : function (_wn) { return _wn.rewrite (); },
@@ -83,7 +83,7 @@ const inphrase = String.raw`
 // `;
 
 var [result, rewriteHooks] = patternMatch (inphrase);
-console.log (result.succeeded ());
+//console.log (result.succeeded ());
 
 // console.log (rewriteHooks);
 
